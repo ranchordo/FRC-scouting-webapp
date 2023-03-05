@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h2>{% block title %}Scouter login{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+
+<form method="post">
+	<label for="nick">Nickname (must be alphanumeric, case insensitive)</label>
+	<input name="nick" id="nick" required>
+	<br/>
+	<input type="submit" value="Login">
+</form>
+{% endblock %}

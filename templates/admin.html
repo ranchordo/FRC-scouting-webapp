@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h2>{% block title %}Scouter admin{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+
+<script>
+    window.onload = init;
+    function pollScouterChanges() {
+        const http = new XMLHttpRequest();
+        http.open('GET', "/admin/scouters_update/");
+        http.send();
+        http.onreadystatechange = function(e) {
+            if (http.responseText === "reload") {
+                location.reload();
+            }
+        };
+        setTimeout(pollScouterChanges, 2000);
+    }
+    function init() {
+        setTimeout(pollScouterChanges, 2000);
+    }
+</script>
+
+<div style="border: 1px solid lightslategray">
+    <h2>{{ num_scouters }} scouters active</h2>
+    <form method="post" onkeydown="return event.key != 'Enter';">
+        <table>
+            {% for scouter in scouters %}
+            <tr>
+                <th><label>Scouter "{{ scouter }}"</label></th>
+                <th><input name="{{ scouter }}" id="{{ scouter }}" /></th>
+            </tr>
+            {% endfor %}
+        </table>
+        <br />
+        <input type="submit" value="Assign all">
+    </form>
+</div>
+{% endblock %}

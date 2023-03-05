@@ -1,0 +1,14 @@
+<!doctype html>
+<title>{% block title %}4293 Scouting webapp{% endblock %}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/water.css">
+
+<section class="content">
+	{% for message in get_flashed_messages() %}
+	<div class="flashmsg">{{ message }}</div>
+	{% endfor %}
+	<header>
+		{% block header %}{% endblock %}
+	</header>
+	{% block content %}<h1>Error: Template did not override this message.</h1>{% endblock %}
+</section>

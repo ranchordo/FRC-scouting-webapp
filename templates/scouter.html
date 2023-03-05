@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Scouting in progress{% endblock %}
+
+{% block header %}
+<h2>Scouting in progress. Your nickname is "{{ nickname }}".</h2>
+{% endblock %}
+
+{% block content %}
+
+<script>
+    window.onload = init;
+    function plus(id) {
+        const element = document.getElementById(id);
+        element.value = parseInt(element.value) + 1;
+    }
+    function minus(id) {
+        const element = document.getElementById(id);
+        element.value = Math.max(parseInt(element.value) - 1, 0);
+    }
+    function init() {
+        const assignment_worker = new Worker("/assignment-worker.js");
+        document.getElementById("hideable").style.visibility = "hidden";
+        assignment_worker.postMessage("{{ nickname }}");
+        assignment_worker.onmessage = function (e) {
+            console.log("Got a message: " + e.data);
+            document.getElementById("assignment").innerHTML = "Scouting assignment " + e.data;
+            document.getElementById("hideable").style.visibility = "visible";
+        };
+    }
+</script>
+<br /><br /><br /><br />
+<div style="border: 1px solid lightslategray">
+    <form method="post" onkeydown="return event.key != 'Enter';">
+        <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+            <h2 id="assignment">Waiting for assignment...</h3>
+        </div>
+        <br />
+        <div id="hideable">
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+                <h3 id="assignment">Auto</h3>
+            </div>
+            {% for id,label in counters_auto %}
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+                <label for="{{ id }}_div">{{ label }}</label>
+            </div>
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center"
+                id="{{ id }}_div" name="{{ id }}_div">
+                <input type="button" value="-" onclick="minus('{{ id }}')" />
+                <input name="{{ id }}" id="{{ id }}" value="0" required />
+                <input type="button" value="+" onclick="plus('{{ id }}')" />
+            </div>
+            {% endfor %}
+            <hr />
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+                <h3 id="assignment">Teleop</h3>
+            </div>
+            {% for id,label in counters_teleop %}
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+                <label for="{{ id }}_div">{{ label }}</label>
+            </div>
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center"
+                id="{{ id }}_div" name="{{ id }}_div">
+                <input type="button" value="-" onclick="minus('{{ id }}')" />
+                <input name="{{ id }}" id="{{ id }}" value="0" required />
+                <input type="button" value="+" onclick="plus('{{ id }}')" />
+            </div>
+            {% endfor %}
+            <hr />
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+                <input name="notes" placeholder="Notes?">
+            </div>
+            <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+                <input type="submit" value="Submit">
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
