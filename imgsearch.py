@@ -66,7 +66,7 @@ def getBestColor(img):
 
 def getTeamColor(team):
     # return (1,1,1)
-    urls = getUrls(f"frc {team} logo", 3)
+    urls = getUrls(f"frc {team} logo", 4)
     imgs = [downloadImage(url) for url in urls]
     img = getBestImage(imgs)
     return (getBestColor(img) / 255.0)
