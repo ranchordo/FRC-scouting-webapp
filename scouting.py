@@ -17,17 +17,15 @@ def create_app():
 
     args = parser.parse_args()
 
+    if args.ods is None:
+        print("No ODS file specified. Cannot proceed.")
+        os._exit(1)
+
     if args.offline:
         if args.spreadsheet is not None:
             print("Spreadsheet specified in offline mode. Cannot proceed.")
             os._exit(1)
-        if args.ods is None:
-            print("No ODS file specified in offline mode. Cannot proceed.")
-            os._exit(1)
     else:
-        if args.ods is not None:
-            print("ODS file specified in online mode. Cannot proceed.")
-            os._exit(1)
         if args.spreadsheet is None:
             print("No spreadsheet specified in online mode. Cannot proceed.")
             os._exit(1)

@@ -39,9 +39,8 @@ def init():
                 "Online mode specified, but system is not connected to the internet. Cannot proceed.")
             os._exit(1)
         gsheets.initialize()
-    else:
-        if not os.path.exists(odsFile):
-            save_data(odsFile, OrderedDict())
+    if not os.path.exists(odsFile):
+        save_data(odsFile, OrderedDict())
 
 
 def computeTotal(response, counters):
@@ -68,10 +67,13 @@ def createTeamSheet(team):
     row.append("Teleop total")
     row.append("Total")
     if online and str(team) not in gsheets.getSheetNames():
-        color = imgsearch.getTeamColor(team)
-        gsheets.addSheet(str(team), tuple(color))
+        if os.path.exists("cse_creds.json"):
+            color = imgsearch.getTeamColor(team)
+            gsheets.addSheet(str(team), tuple(color))
+        else:
+            gsheets.addSheet(str(team), None)
         gsheets.appendRow(team, row)
-    if not online and str(team) not in get_data(odsFile).keys():
+    if str(team) not in get_data(odsFile).keys():
         data = get_data(odsFile)
         data.update({str(team): [row]})
         save_data(odsFile, data)
@@ -80,11 +82,10 @@ def createTeamSheet(team):
 def addRow(team, row):
     if online:
         gsheets.appendRow(team, row)
-    else:
-        data = get_data(odsFile)
-        newdata = data[str(team)] + [row]
-        data.update({str(team): newdata})
-        save_data(odsFile, data)
+    data = get_data(odsFile)
+    newdata = data[str(team)] + [row]
+    data.update({str(team): newdata})
+    save_data(odsFile, data)
 
 
 def handleNewRow(team, row):

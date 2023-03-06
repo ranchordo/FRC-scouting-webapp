@@ -37,34 +37,47 @@ def initialize():
 
 
 def getSheetNames():
-    data = sheet_service.get(
-        spreadsheetId=data_handler.spreadsheetId).execute()
-    return [i['properties']['title'] for i in data.get('sheets', [])]
+    try:
+        data = sheet_service.get(
+            spreadsheetId=data_handler.spreadsheetId).execute()
+        return [i['properties']['title'] for i in data.get('sheets', [])]
+    except HttpError as err:
+        print(err)
+        print("gsheets: getSheetNames: HttpError.")
+        return []
 
 
 def addSheet(name, color):
-    body = {
-        'requests': [{
-            'addSheet': {
-                'properties': {
-                    'title': name,
+    try:
+        body = {
+            'requests': [{
+                'addSheet': {
+                    'properties': {
+                        'title': name,
+                    }
                 }
-            }
-        }]
-    }
-    if color is not None:
-        body['requests'][0]['addSheet']['properties']['tabColor'] = {
-            'red': color[0],
-            'green': color[1],
-            'blue': color[2]
+            }]
         }
-    sheet_service.batchUpdate(
-        spreadsheetId=data_handler.spreadsheetId, body=body).execute()
+        if color is not None:
+            body['requests'][0]['addSheet']['properties']['tabColor'] = {
+                'red': color[0],
+                'green': color[1],
+                'blue': color[2]
+            }
+        sheet_service.batchUpdate(
+            spreadsheetId=data_handler.spreadsheetId, body=body).execute()
+    except HttpError as err:
+        print(err)
+        print("gsheets: addSheet: HttpError.")
 
 
 def appendRow(sheet, values):
-    sheet_service.values().append(spreadsheetId=data_handler.spreadsheetId, range=f'{ sheet }!A1:Z1', body={
-        'range': f'{ sheet }!A1:Z1',
-        'values': [values],
-        'majorDimension': 'ROWS'
-    }, valueInputOption="USER_ENTERED").execute()
+    try:
+        sheet_service.values().append(spreadsheetId=data_handler.spreadsheetId, range=f'{ sheet }!A1:Z1', body={
+            'range': f'{ sheet }!A1:Z1',
+            'values': [values],
+            'majorDimension': 'ROWS'
+        }, valueInputOption="USER_ENTERED").execute()
+    except HttpError as err:
+        print(err)
+        print("gsheets: appendRow: HttpError.")
