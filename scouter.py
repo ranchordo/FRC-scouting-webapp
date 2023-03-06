@@ -1,5 +1,6 @@
 import flask
 import data_handler
+from data_handler import counters_auto, counters_teleop
 import time
 
 accepted_assignments = {}
@@ -19,17 +20,6 @@ def getActiveScouters():
             unprocessed_scouters_changes = True
     scouters = new_scouters
     return scouters
-
-counters_auto = [
-    ("auto_low_pieces", "Pieces scored on low level"),
-    ("auto_mid_pieces", "Pieces scored on mid level"),
-    ("auto_high_pieces", "Pieces scored on high level")
-]
-counters_teleop = [
-    ("teleop_low_pieces", "Pieces scored on low level"),
-    ("teleop_mid_pieces", "Pieces scored on mid level"),
-    ("teleop_high_pieces", "Pieces scored on high level")
-]
 
 
 def getAssignment(nickname):
@@ -72,7 +62,9 @@ def modify_app(app):
             if nickname in accepted_assignments:
                 del accepted_assignments[nickname]
             return flask.redirect("/scouter/" + nickname + "/")
-        return flask.render_template("scouter.html", nickname=nickname, counters_auto=counters_auto, counters_teleop=counters_teleop)
+        c_auto = [c[:2] for c in counters_auto]
+        c_teleop = [c[:2] for c in counters_teleop]
+        return flask.render_template("scouter.html", nickname=nickname, counters_auto=c_auto, counters_teleop=c_teleop)
 
     @app.route("/scouter/<nickname>/assignment/")
     def get_assignment(nickname):
