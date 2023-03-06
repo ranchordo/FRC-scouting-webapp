@@ -13,6 +13,7 @@ def create_app():
         prog="FRC Scouting Webapp", description="Simple flask webapp designed for online and offline FRC event scouting.")
     parser.add_argument('--offline', action=argparse.BooleanOptionalAction)
     parser.add_argument('--spreadsheet')
+    parser.add_argument('--ods')
 
     args = parser.parse_args()
 
@@ -20,12 +21,19 @@ def create_app():
         if args.spreadsheet is not None:
             print("Spreadsheet specified in offline mode. Cannot proceed.")
             os._exit(1)
+        if args.ods is None:
+            print("No ODS file specified in offline mode. Cannot proceed.")
+            os._exit(1)
     else:
+        if args.ods is not None:
+            print("ODS file specified in online mode. Cannot proceed.")
+            os._exit(1)
         if args.spreadsheet is None:
             print("No spreadsheet specified in online mode. Cannot proceed.")
             os._exit(1)
 
     data_handler.spreadsheetId = args.spreadsheet
+    data_handler.odsFile = args.ods
     data_handler.online = (False if args.offline else True)
     data_handler.init()
 
