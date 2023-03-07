@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import os
 import data_handler
+import ssl
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 sheet_service = None
@@ -81,3 +82,12 @@ def appendRow(sheet, values):
     except HttpError as err:
         print(err)
         print("gsheets: appendRow: HttpError.")
+
+def trySSL(func, default, *values):
+    try:
+        return func(*values)
+    except ssl.SSLError:
+        return func(*values)
+    finally:
+        print("No SSL! Bad!")
+        return default
